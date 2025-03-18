@@ -1,12 +1,12 @@
-import { useContext } from 'react'
 import './deg-toggle.scss'
-import { UnitsContext } from '../../App'
+import { setUnitsLS } from '../../scripts/localStorageControl'
 
-function DegToggle({ elClasses = '' }) {
+function DegToggle({ elClasses = '', tempUnits, setTempUnits }) {
 
-    const { tempUnits, setTempUnits } = useContext(UnitsContext)
     const toggleUnits = function (e) {
-        setTempUnits(e.target.value)
+        let currentVal = e.target.value
+        setTempUnits(currentVal)
+        setUnitsLS(currentVal)
     }
 
     const classes = "deg-toggle" + ' ' + elClasses

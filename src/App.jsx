@@ -2,6 +2,9 @@ import React from 'react';
 import './App.scss'
 import City from './components/City'
 import DegToggle from './components/DegToggle'
+import { getUnitsLS, getCoordsLS } from './scripts/localStorageControl';
+import { determinationDirection } from './scripts/serviceFunctions';
+import Search from './components/Search';
 const API_KEY = '8aa2ce2bb24245d7ad3160220251403';
 const tempUnitsArr = [
 	{
@@ -16,15 +19,17 @@ const tempUnitsArr = [
 	}
 ]
 
-export const UnitsContext = React.createContext('')
+export const SearchContext = React.createContext('')
 
 function App() {
 
 	const [weatherData, setWeatherData] = React.useState();
-	const [userCoords, setUserCoords] = React.useState('53.024265,158.643503');
-	const [userCity, setUserCity] = React.useState('Петропавловск-Камчатский');
-	const [tempUnits, setTempUnits] = React.useState(1);
-	let trigger = true
+	const [userCoords, setUserCoords] = React.useState(getCoordsLS());
+	const [userCity, setUserCity] = React.useState('');
+	const [tempUnits, setTempUnits] = React.useState(getUnitsLS());
+	const [searchActive, setSearchActive] = React.useState(false)
+
+	//let trigger = true
 
 	React.useEffect(() => {
 		function fetchWeather() {
@@ -35,6 +40,7 @@ function App() {
 					})
 					.then(function (data) {
 						setWeatherData(data)
+						setUserCity(data.location.name)
 						console.log(data)
 					})
 
@@ -44,11 +50,11 @@ function App() {
 			}
 		}
 
-		if (trigger) {
-			fetchWeather()
+		fetchWeather()
+		/**if (trigger) {
 			trigger = false
-		}
-	}, [])
+		}*/
+	}, [userCoords])
 
 	return (
 		<>
@@ -56,10 +62,11 @@ function App() {
 			<main>
 				<div className="page-layout">
 					<div className="weather-controls">
-						<UnitsContext.Provider value={{ tempUnits, setTempUnits }}>
-							<City elClasses='weather-controls__city' />
-							<DegToggle elClasses='weather-controls__toggle' />
-						</UnitsContext.Provider>
+						<SearchContext.Provider value={{ searchActive, setSearchActive }}>
+							<City userCity={userCity} setUserCity={setUserCity} elClasses='weather-controls__city' />
+						</SearchContext.Provider>
+
+						<DegToggle elClasses='weather-controls__toggle' tempUnits={tempUnits} setTempUnits={setTempUnits} />
 					</div>
 
 					<div className="weather-body">
@@ -84,7 +91,7 @@ function App() {
 							<>
 								<div className="weather-params__item param">
 									<div className="param__name">Ветер</div>
-									<div className="param__value">{Math.round(weatherData.current.wind_kph / 3.6 * 100) / 100 + 'м/с, ' + weatherData.current.wind_dir}</div>
+									<div className="param__value">{Math.round(weatherData.current.wind_kph / 3.6 * 100) / 100 + 'м/с, ' + determinationDirection(weatherData.current.wind_degree)}</div>
 								</div>
 								<div className="weather-params__item param">
 									<div className="param__name">Давление</div>
@@ -103,6 +110,9 @@ function App() {
 					</div>
 				</div>
 			</main>
+			<SearchContext.Provider value={{ searchActive, setSearchActive }}>
+				<Search setUserCoords={setUserCoords} />
+			</SearchContext.Provider>
 		</>
 	)
 }

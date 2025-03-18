@@ -1,15 +1,118 @@
+import React from 'react'
+import { SearchContext } from '../../App'
 import './search.scss'
+import { setCoordsLS } from '../../scripts/localStorageControl'
 
-function Search() {
+function Search({ setUserCoords }) {
+
+    const { searchActive, setSearchActive } = React.useContext(SearchContext)
+    const searchInput = React.useRef()
+    const [promptsList, setPromptsList] = React.useState([])
+    const [promptsListEmpty, setPromptsListEmpty] = React.useState(false)
+    const [searchValue, setSearchValue] = React.useState('')
+    const [citiesList, setCitiesList] = React.useState([])
+    const searchClasses = searchActive ? "search active" : "search"
+
+    let trigger = true
+
+    React.useEffect(() => {
+        function fetchCitiesList() {
+            fetch('https://raw.githubusercontent.com/AgamaWD/weather_react/refs/heads/master/src/public/data/cities_russia.json', {
+                method: 'GET'
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    setCitiesList(data.cities)
+                })
+        }
+
+        if (trigger) {
+            fetchCitiesList()
+            trigger = false
+        }
+    }, [])
+
+    const onChangeInput = (value) => {
+        setSearchValue(value)
+        setPrompts(value)
+    }
+
+    const onChoosePrompt = (coords) => {
+        setSearchValue('')
+        setSearchActive(false)
+        setUserCoords(coords)
+        setCoordsLS(coords)
+    }
+
+    const setPrompts = (value) => {
+        let searchValue = value.toLowerCase()
+        setPromptsList([])
+
+        if (searchValue.length < 2) {
+            setPromptsListEmpty(false)
+            return
+        }
+
+        let count = 0;
+        let promptsListArr = []
+
+        for (let i = 0; i < citiesList.length; i++) {
+            let currentCity = citiesList[i]
+            let currentCityName = currentCity.city
+
+            if (currentCityName.toLowerCase().startsWith(searchValue)) {
+
+                promptsListArr.push({
+                    id: i,
+                    coords: currentCity.lat + ',' + currentCity.lng,
+                    cityName: currentCityName
+                })
+
+                if (currentCityName.toLowerCase() === searchValue) break
+
+                count++
+
+                if (count == 10) {
+                    break
+                }
+            }
+        }
+
+        if (promptsListArr.length < 1) {
+            setPromptsListEmpty(true)
+        } else {
+            setPromptsListEmpty(false)
+        }
+
+        setPromptsList(promptsListArr)
+
+    }
 
     return (
-        <div className="search">
-            <input className="search__line" type="text" list="cities" />
-            <datalist className="js-list" id="cities">
-            </datalist>
-            <button type="button" className="search__submit">
-                <svg enableBackground="new 0 0 32 32" version="1.1" viewBox="0 0 32 32" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"><g id="search_1_"><path d="M20,0.005c-6.627,0-12,5.373-12,12c0,2.026,0.507,3.933,1.395,5.608l-8.344,8.342l0.007,0.006   C0.406,26.602,0,27.49,0,28.477c0,1.949,1.58,3.529,3.529,3.529c0.985,0,1.874-0.406,2.515-1.059l-0.002-0.002l8.341-8.34   c1.676,0.891,3.586,1.4,5.617,1.4c6.627,0,12-5.373,12-12C32,5.378,26.627,0.005,20,0.005z M4.795,29.697   c-0.322,0.334-0.768,0.543-1.266,0.543c-0.975,0-1.765-0.789-1.765-1.764c0-0.498,0.21-0.943,0.543-1.266l-0.009-0.008l8.066-8.066   c0.705,0.951,1.545,1.791,2.494,2.498L4.795,29.697z M20,22.006c-5.522,0-10-4.479-10-10c0-5.522,4.478-10,10-10   c5.521,0,10,4.478,10,10C30,17.527,25.521,22.006,20,22.006z" fill="currentColor" /><path d="M20,5.005c-3.867,0-7,3.134-7,7c0,0.276,0.224,0.5,0.5,0.5s0.5-0.224,0.5-0.5c0-3.313,2.686-6,6-6   c0.275,0,0.5-0.224,0.5-0.5S20.275,5.005,20,5.005z" fill="currentColor" /></g></svg>
+        <div className={searchClasses}>
+            <div onClick={() => { setSearchActive(false) }} className="search__overlay"></div>
+            <button type="button" onClick={() => { setSearchActive(false) }} className="search__close">
+                <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z" fill="currentColor" /></svg>
             </button>
+            <div className="search__modal">
+                <input ref={searchInput} placeholder='Название города' value={searchValue} onChange={(e) => onChangeInput(e.target.value)} className="search__line" type="text" />
+                <div className="search__prompts">
+                    {
+                        promptsList.length &&
+                        promptsList.map(prompt =>
+                            <div key={prompt.id} className="search__prompt" onClick={function () { onChoosePrompt(prompt.coords) }}>{prompt.cityName}</div>
+                        )
+                    }
+                    {
+                        promptsListEmpty &&
+                        <div className='search__empty'>
+                            Ничего не найдено. Попробуйте другой запрос
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     )
 }
