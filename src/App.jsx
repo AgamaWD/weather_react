@@ -2,7 +2,7 @@ import React from 'react';
 import './App.scss'
 import City from './components/City'
 import DegToggle from './components/DegToggle'
-import { getUnitsLS, getCoordsLS, setCoordsLS } from './scripts/localStorageControl';
+import { getUnitsLS, getCoordsLS } from './scripts/localStorageControl';
 import { determinationDirection } from './scripts/serviceFunctions';
 import Search from './components/Search';
 import { getUserPosition } from './scripts/geoPositionControl';
@@ -32,7 +32,6 @@ function App() {
 
 	React.useEffect(() => {
 		if (!userCoords) {
-			console.log('userCoords ' + userCoords)
 			getUserPosition(setUserCoords)
 		}
 	}, [])
@@ -40,14 +39,13 @@ function App() {
 	React.useEffect(() => {
 		function fetchWeather() {
 			try {
-				fetch(`http://api.weatherapi.com/v1/current.json?q=${userCoords}&key=${API_KEY}&lang=ru`)
+				fetch(`https://api.weatherapi.com/v1/current.json?q=${userCoords}&key=${API_KEY}&lang=ru`)
 					.then(function (response) {
 						return response.json();
 					})
 					.then(function (data) {
 						setWeatherData(data)
 						setUserCity(data.location.name)
-						console.log(data)
 					})
 
 
