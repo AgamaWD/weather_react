@@ -2,7 +2,7 @@ import React from 'react';
 import './App.scss'
 import City from './components/City'
 import DegToggle from './components/DegToggle'
-import { getUnitsLS, getCoordsLS } from './scripts/localStorageControl';
+import { getUnitsLS, getCoordsLS, setCoordsLS } from './scripts/localStorageControl';
 import { determinationDirection } from './scripts/serviceFunctions';
 import Search from './components/Search';
 import { getUserPosition } from './scripts/geoPositionControl';
