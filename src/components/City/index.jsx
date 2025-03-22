@@ -2,11 +2,11 @@ import React from 'react';
 import './city.scss'
 import Btn from '../Btn'
 import { SearchContext } from '../../App';
+import { getUserPosition } from '../../scripts/geoPositionControl';
 
-function City({ elClasses = '', userCity }) {
+function City({ elClasses = '', userCity, setUserCoords }) {
 
     const { setSearchActive } = React.useContext(SearchContext);
-
     const classes = "city" + ' ' + elClasses
 
     return (
@@ -22,7 +22,7 @@ function City({ elClasses = '', userCity }) {
                 <Btn
                     name='Моё местоположение'
                     icon='true'
-                    onClick={() => alert('Эта функция в разработке')}
+                    onClick={() => getUserPosition(setUserCoords, true)}
                 />
             </div>
         </div>

@@ -108,7 +108,7 @@ function Search({ setUserCoords }) {
                     {
                         promptsListEmpty &&
                         <div className='search__empty'>
-                            Ничего не найдено. Попробуйте другой запрос
+                            Ничего не найдено. <br />Попробуйте другой запрос
                         </div>
                     }
                 </div>

@@ -15,6 +15,10 @@
     cursor: pointer;
     transition: opacity $transitions;
 
+    @include max(mobile) {
+        font-size: 16px;
+    }
+
     &:hover {
         opacity: 1;
     }
@@ -22,5 +26,10 @@
     &__icon svg {
         width: 25px;
         height: 25px;
+
+        @include max(mobile) {
+            width: 20px;
+            height: 20px;
+        }
     }
 }

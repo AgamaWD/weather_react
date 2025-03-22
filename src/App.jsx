@@ -5,6 +5,8 @@ import DegToggle from './components/DegToggle'
 import { getUnitsLS, getCoordsLS } from './scripts/localStorageControl';
 import { determinationDirection } from './scripts/serviceFunctions';
 import Search from './components/Search';
+import { getUserPosition } from './scripts/geoPositionControl';
+
 const API_KEY = '8aa2ce2bb24245d7ad3160220251403';
 const tempUnitsArr = [
 	{
@@ -22,14 +24,18 @@ const tempUnitsArr = [
 export const SearchContext = React.createContext('')
 
 function App() {
-
 	const [weatherData, setWeatherData] = React.useState();
 	const [userCoords, setUserCoords] = React.useState(getCoordsLS());
 	const [userCity, setUserCity] = React.useState('');
 	const [tempUnits, setTempUnits] = React.useState(getUnitsLS());
-	const [searchActive, setSearchActive] = React.useState(false)
+	const [searchActive, setSearchActive] = React.useState(false);
 
-	//let trigger = true
+	React.useEffect(() => {
+		if (!userCoords) {
+			console.log('userCoords ' + userCoords)
+			getUserPosition(setUserCoords)
+		}
+	}, [])
 
 	React.useEffect(() => {
 		function fetchWeather() {
@@ -51,19 +57,15 @@ function App() {
 		}
 
 		fetchWeather()
-		/**if (trigger) {
-			trigger = false
-		}*/
 	}, [userCoords])
 
 	return (
 		<>
-
 			<main>
 				<div className="page-layout">
 					<div className="weather-controls">
 						<SearchContext.Provider value={{ searchActive, setSearchActive }}>
-							<City userCity={userCity} setUserCity={setUserCity} elClasses='weather-controls__city' />
+							<City userCity={userCity} setUserCoords={setUserCoords} elClasses='weather-controls__city' />
 						</SearchContext.Provider>
 
 						<DegToggle elClasses='weather-controls__toggle' tempUnits={tempUnits} setTempUnits={setTempUnits} />

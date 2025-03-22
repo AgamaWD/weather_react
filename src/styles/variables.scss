@@ -1,3 +1,13 @@
+@import 'mixins.scss';
+
+// breakpoints
+$media-list: (
+    'xs': 500,
+    'mobile': 767,
+    'tablet': 1023,
+);
+
+
 // colors
 $c-white: #fff;
 $c-text: #232C33;

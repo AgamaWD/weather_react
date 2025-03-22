@@ -7,6 +7,10 @@
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+
+	@include max(mobile) {
+		padding: 30px 15px;
+	}
 }
 
 .weather-controls {
@@ -14,6 +18,11 @@
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: 80px;
+
+	@include max(mobile) {
+		gap: 32px;
+		flex-direction: column-reverse;
+	}
 
 	&__city {
 		flex: 1 1 auto;
@@ -31,11 +40,29 @@
 	align-items: center;
 	gap: 48px;
 
+	@include max(tablet) {
+		gap: 32px;
+	}
+
+	@include max(mobile) {
+		align-items: flex-start;
+	}
 
 	&__icon {
 		display: inline-block;
 		width: 64px;
 		height: 64px;
+		flex: 0 0 auto;
+
+		@include max(tablet) {
+			width: 40px;
+			height: 40px;
+		}
+
+		@include max(xs) {
+			width: 30px;
+			height: 30px;
+		}
 
 		img {
 			width: 100%;
@@ -47,17 +74,35 @@
 	&__bottom {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		gap: 8px;
 	}
 
 	&__desc {
 		font-size: 32px;
+		flex: 1 1 auto;
+
+		@include max(tablet) {
+			font-size: 24px;
+		}
+
+		@include max(xs) {
+			font-size: 18px;
+		}
 	}
 
 	&__temp {
 		text-align: center;
 		font-size: 150px;
 		line-height: 1.1em;
+
+		@include max(tablet) {
+			font-size: 120px;
+		}
+
+		@include max(xs) {
+			font-size: 90px;
+		}
 	}
 
 	&__feel {
@@ -73,19 +118,41 @@
 	display: flex;
 	justify-content: space-around;
 	align-items: flex-start;
-	flex-wrap: wrap;
 	margin-top: auto;
+
+	@include max(tablet) {
+		justify-content: space-between;
+	}
+
+	@include max(mobile) {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px;
+	}
+
+	@include max(xs) {
+		grid-template-columns: 1fr;
+	}
 
 	&__item {
 		max-width: 25%;
 
+		@include max(mobile) {
+			max-width: 100%;
+		}
 	}
+
+
 }
 
 .param {
 	width: fit-content;
 	text-align: left;
 	font-size: 18px;
+
+	@include max(tablet) {
+		font-size: 16px;
+	}
 
 	&__name {
 		display: block;
@@ -95,5 +162,9 @@
 	&__value {
 		margin-top: 8px;
 		font-size: 1.2em;
+
+		@include max(tablet) {
+			margin-top: 4px;
+		}
 	}
 }

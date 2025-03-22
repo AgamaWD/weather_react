@@ -1,5 +1,3 @@
-const defaultCoords = '55.753215,37.622504'; // Москва
-
 export const getUnitsLS = () => {
     let lsResult = localStorage.getItem('degUnits')
     const units = lsResult ? lsResult : '1';
@@ -12,8 +10,7 @@ export const setUnitsLS = (units) => {
 
 export const getCoordsLS = () => {
     let lsResult = localStorage.getItem('userCoords');
-    const coords =  lsResult ? lsResult : defaultCoords;
-    return coords
+    return lsResult
 }
 
 export const setCoordsLS = (coords) => {
